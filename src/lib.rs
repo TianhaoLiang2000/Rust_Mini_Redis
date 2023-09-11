@@ -1,61 +1,68 @@
 #![feature(impl_trait_in_assoc_type)]
 
-use std::{sync::Mutex, collections::HashMap, ops::Deref};
+use std::{collections::HashMap, ops::Deref, sync::Mutex};
 
 use anyhow::Ok;
 use lazy_static::lazy_static;
 pub struct S;
 
 lazy_static! {
-    static ref MY_MAP: Mutex<HashMap<i64, volo_gen::volo::example::Item>> = Mutex::new(HashMap::new());
+    static ref MY_MAP: Mutex<HashMap<i64, volo_gen::volo::example::Item>> =
+        Mutex::new(HashMap::new());
 }
 
 #[volo::async_trait]
 impl volo_gen::volo::example::ItemService for S {
-    // 这部分是我们需要增加的代码
     async fn get_item(
         &self,
         _req: volo_gen::volo::example::GetItemRequest,
     ) -> core::result::Result<volo_gen::volo::example::GetItemResponse, volo_thrift::AnyhowError>
     {
-		let my_map_lock = MY_MAP.lock().unwrap();
-		let my_map = my_map_lock.deref();
-		let item_value = my_map.get(&_req.id);
-		let item = item_value.unwrap();
-		Ok(volo_gen::volo::example::GetItemResponse{ item: item.clone() })	
+        let my_map_lock = MY_MAP.lock().unwrap();
+        let my_map = my_map_lock.deref();
+        let item_value = my_map.get(&_req.id);
+        let item = item_value.unwrap();
+        Ok(volo_gen::volo::example::GetItemResponse { item: item.clone() })
     }
 
-	async fn set_item(
+    async fn set_item(
         &self,
         _req: volo_gen::volo::example::SetItemRequest,
     ) -> core::result::Result<volo_gen::volo::example::SetItemResponse, volo_thrift::AnyhowError>
     {
-		let item = volo_gen::volo::example::Item{id:_req.id, title: _req.title, content: _req.content, extra: Some(std::collections::HashMap::new()) };
-		{
-			let mut my_map = MY_MAP.lock().unwrap();
-			my_map.insert(_req.id, item.clone());
-		}
+        let item = volo_gen::volo::example::Item {
+            id: _req.id,
+            title: _req.title,
+            content: _req.content,
+            extra: Some(std::collections::HashMap::new()),
+        };
+        {
+            let mut my_map = MY_MAP.lock().unwrap();
+            my_map.insert(_req.id, item.clone());
+        }
         Ok(volo_gen::volo::example::SetItemResponse { item })
     }
 
-	async fn del_item(
+    async fn del_item(
         &self,
         _req: volo_gen::volo::example::DelItemRequest,
     ) -> core::result::Result<volo_gen::volo::example::DelItemResponse, volo_thrift::AnyhowError>
     {
-		#[warn(unused_assignments)]
-		let del: bool;
-		match MY_MAP.lock().unwrap().remove(&_req.id){
-			Some(_item) => del = true,
-			None => del = false,
-		}
-		
-        Ok(volo_gen::volo::example::DelItemResponse{ del })
+        #[warn(unused_assignments)]
+        let del: bool;
+        match MY_MAP.lock().unwrap().remove(&_req.id) {
+            Some(_item) => del = true,
+            None => del = false,
+        }
+
+        Ok(volo_gen::volo::example::DelItemResponse { del })
     }
 
-	async fn ping(&self,_req: volo_gen::volo::example::PingRequest,) -> core::result::Result<volo_gen::volo::example::PingResponse, volo_thrift::AnyhowError>
-    {
-        Ok(volo_gen::volo::example::PingResponse{ ping: true })
+    async fn ping(
+        &self,
+        _req: volo_gen::volo::example::PingRequest,
+    ) -> core::result::Result<volo_gen::volo::example::PingResponse, volo_thrift::AnyhowError> {
+        Ok(volo_gen::volo::example::PingResponse { ping: true })
     }
 }
 

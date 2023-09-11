@@ -13,15 +13,9 @@ lazy_static! {
     };
 }
 
-// 定义一个模拟的FastStr类型
-#[derive(Debug)]
-struct FastStrWrapper<'a>(&'a str);
-
 
 
 #[volo::main]
-
-
 
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -90,16 +84,12 @@ async fn main() {
             // 执行 ping 操作
             // 在发送 ping 请求之前记录时间戳
             let send_time = Instant::now();
-
             // 执行 ping 操作，等待响应
             let resp4 = ping().await;
-
             // 在接收到 ping 响应后记录时间戳
             let receive_time = Instant::now();
-
             // 计算往返时间（Round-Trip Time）
             let rtt = receive_time.duration_since(send_time);
-
             match resp4 {
                 Ok(info) => {
                     tracing::info!("{:?}", info);
@@ -118,7 +108,6 @@ async fn ping() -> Result<(), Box<dyn std::error::Error>> {
     let _resp4 = CLIENT.ping(req4).await;
     Ok(())
 }
-// 定义一个模拟的 set_item 函数
 
 async fn set_item<'a>(
     id: i64,
