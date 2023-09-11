@@ -20,23 +20,16 @@ impl volo_gen::volo::example::ItemService for S {
     {
         let my_map_lock = MY_MAP.lock().unwrap();
         let my_map = my_map_lock.deref();
-        println!("aaa");
-        match my_map.get(&_req.id) {
-            Some(item) => Ok(volo_gen::volo::example::GetItemResponse { item: item.clone() }),
-            None => {
-                println!("aaa");
-                let item = volo_gen::volo::example::Item {
-                    id: 0,
-                    title: "null".into(),
-                    content: "null".into(),
-                    extra: Some(std::collections::HashMap::new()),
-                };
-                Ok(Default::default())
-                //Ok(volo_gen::volo::example::GetItemResponse { item })
-            }
-        }
-        //let item = item_value.unwrap();
-        //Ok(volo_gen::volo::example::GetItemResponse { item: item.clone() })
+		println!("aaa");
+        match my_map.get(&_req.id){
+			Some(item) => Ok(volo_gen::volo::example::GetItemResponse { item: item.clone() }),
+			None => 
+			{
+				println!("aaa");
+				let _item = volo_gen::volo::example::Item{ id: 0, title: "null".into(), content: "null".into(), extra: Some(std::collections::HashMap::new()), };
+				Ok(Default::default())
+			},
+		}
     }
 
     async fn set_item(
