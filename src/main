@@ -1,0 +1,47 @@
+async fn main() {
+    tracing_subscriber::fmt::init();
+    let req = volo_gen::volo::example::SetItemRequest {id:1024, title: "MyTitle".into(), content: "123".into() };
+    let resp = CLIENT.set_item(req).await;
+    match resp {
+        Ok(info) => tracing::info!("{:?}", info),
+        Err(e) => tracing::error!("{:?}", e),
+    }
+    let req2 = volo_gen::volo::example::GetItemRequest {id:1024 };
+    let resp2 = CLIENT.get_item(req2).await;
+    match resp2 {
+        Ok(info) => tracing::info!("{:?}", info),
+        Err(e) => tracing::error!("{:?}", e),
+    }
+    let req3 = volo_gen::volo::example::DelItemRequest {id:1024 };
+    let resp3 = CLIENT.del_item(req3).await;
+    match resp3 {
+        Ok(info) => tracing::info!("{:?}", info),
+        Err(e) => tracing::error!("{:?}", e),
+    }
+    let req4 = volo_gen::volo::example::PingRequest {};
+      // 在发送 ping 请求之前记录时间戳
+      let send_time = Instant::now();
+
+      let resp4 = CLIENT.ping(req4).await;
+  
+      // 在接收到 ping 响应后记录时间戳
+      let receive_time = Instant::now();
+  
+      // 计算往返时间（Round-Trip Time）
+      let rtt = receive_time.duration_since(send_time);
+  
+      match resp4 {
+          Ok(info) => {
+              tracing::info!("{:?}", info);
+              // 打印往返时间
+              tracing::info!("Round-Trip Time (RTT): {:?}", rtt);
+          }
+          Err(e) => tracing::error!("{:?}", e),
+      }
+
+}
+
+a1234@1234deMacBook-Pro Mini_Redis %  ./target/debug/client set_item --id 1024 --title "MyTitle" --content "123"
+2023-09-11T21:48:30.289152Z  INFO mini_redis: Request took 3ms
+2023-09-11T21:48:30.289225Z  INFO client: Set item successful
+a1234@1234deMacBook-Pro Mini_Redis %  ./target/debug/client get_item --id 1024    
