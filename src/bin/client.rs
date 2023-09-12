@@ -173,7 +173,7 @@ async fn main() {
                     let command = parts[0];
                     let id: i64 = parts[1].parse::<i64>().unwrap();
                     let title = parts[2];
-                    let content = parts[2];
+                    let content = parts[3];
 
                     match command {
                         "SET" => set_item(id, &title, &content).await,
